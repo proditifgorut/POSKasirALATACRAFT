@@ -1,0 +1,314 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none;
+  }
+
+  .payment-method-btn {
+    @apply p-4 border-2 border-gray-200 rounded-lg text-center cursor-pointer hover:border-primary-300 transition-colors;
+  }
+
+  .payment-method-btn.active {
+    @apply border-primary-500 bg-primary-50 text-primary-700;
+  }
+
+  .receipt-content {
+    @apply font-mono;
+  }
+
+  /* New component for printable document styling */
+  .document-wrapper {
+    @apply bg-white border border-gray-300;
+  }
+}
+
+.modal {
+  backdrop-filter: blur(4px);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Stock status indicators */
+.stock-low {
+  @apply border-l-4 border-orange-400;
+}
+
+.stock-out {
+  @apply border-l-4 border-red-400 opacity-60;
+}
+
+.stock-normal {
+  @apply border-l-4 border-green-400;
+}
+
+/* Animation for adding to cart */
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+}
+
+.cart-add-animation {
+  animation: pulse-green 0.6s ease-out;
+}
+
+/* --- CLASSIC KWITANSI STYLES --- */
+.kwitansi-classic-wrapper {
+    display: flex;
+    width: 21cm; /* A4 width */
+    height: 8cm;
+    border: 1px solid #a0d8ef;
+    background-color: #e0f7ff;
+    /* Approximation of the guilloché pattern */
+    background-image:
+        radial-gradient(circle at center, rgba(179, 229, 252, 0.5) 1px, transparent 1px),
+        radial-gradient(circle at center, rgba(179, 229, 252, 0.5) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.kwitansi-classic-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed #4fc3f7;
+}
+
+.kwitansi-stub {
+    flex: 0 0 5cm;
+    padding: 0.5cm;
+    border-right: 2px dashed #4fc3f7;
+    position: relative;
+}
+
+.kwitansi-stub-content {
+    height: 100%;
+    border: 2px solid #4fc3f7;
+    border-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%234FC3F7FF' stroke-width='4' stroke-dasharray='2,4' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e") 2;
+    padding: 0.5cm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.stub-logo {
+    flex-grow: 1;
+    background-image: radial-gradient(circle, #b3e5fc 20%, transparent 20%);
+    background-size: 30px 30px;
+    opacity: 0.5;
+    margin: 1cm 0;
+}
+
+.stub-total-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+.stub-total-amount {
+    font-size: 16px;
+    font-weight: bold;
+    border-top: 1px solid #4fc3f7;
+    padding-top: 4px;
+}
+
+.kwitansi-main {
+    flex-grow: 1;
+    padding: 0.5cm 1cm;
+    position: relative;
+}
+
+.kwitansi-main::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background-image: radial-gradient(circle, #b3e5fc 30%, transparent 30%);
+    background-size: 80px 80px;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.kwitansi-main-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.field-row {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 1.2rem;
+    font-size: 14px;
+}
+
+.kwitansi-label {
+    flex: 0 0 120px;
+    color: #01579b;
+}
+
+.input-line {
+    flex-grow: 1;
+    border-bottom: 1.5px dotted #333;
+    padding: 0 4px;
+    min-height: 24px;
+    font-style: italic;
+    color: #374151;
+}
+
+.shaded-bg {
+    background: repeating-linear-gradient(
+        45deg,
+        #d1e6f0,
+        #d1e6f0 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    border-radius: 2px;
+}
+
+.kwitansi-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.total-box {
+    border: 2px solid #01579b;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+}
+
+.rp-label {
+    font-weight: bold;
+    color: #01579b;
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.total-amount {
+    font-size: 20px;
+    font-weight: bold;
+    color: #01579b;
+}
+
+.signature-area {
+    text-align: center;
+    font-size: 12px;
+}
+
+/* --- UNIFIED PRINT STYLES (REFACTORED) --- */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .printable, .printable * {
+    visibility: visible;
+  }
+
+  .printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: white;
+    font-size: 12pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .printable-container {
+    padding: 0;
+    margin: 0;
+  }
+
+  .document-wrapper {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .receipt-content {
+    max-width: 320px; /* Optimal width for thermal-style receipts */
+    padding: 1cm;
+  }
+
+  .printable tbody tr:nth-child(even) {
+    background-color: #f9fafb !important; /* gray-50 */
+  }
+  
+  .printable tbody tr {
+      border-bottom-width: 1px;
+      border-color: #e5e7eb !important; /* gray-200 */
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 1cm;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

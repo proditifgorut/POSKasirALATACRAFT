@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alata Craft - POS System</title>
+    
+    <meta name="description" content="Point of Sale system for Alata Craft - Water hyacinth craft business with advanced local database" />
+    <meta name="author" content="Alata Craft" />
+    <meta property="og:title" content="Alata Craft - POS System" />
+    <meta property="og:description" content="Point of Sale system for Alata Craft - Water hyacinth craft business with advanced local database" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image:alt" content="Alata Craft POS System Preview" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Alata Craft - POS System" />
+    <meta name="twitter:description" content="Point of Sale system for Alata Craft - Water hyacinth craft business with advanced local database" />
+
+    <link rel="canonical" href="https://alpha.dualite.dev" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Alata Craft POS",
+          "url": "https://alpha.dualite.dev",
+          "description": "Point of Sale system for Alata Craft - Water hyacinth craft business with advanced local database",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Alata Craft"
+          }
+        }
+    </script>
+</head>
+<body class="bg-cream-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary-800 text-white shadow-lg no-print">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-cream-300 rounded-lg flex items-center justify-center">
+                        <span class="font-bold text-primary-800 text-lg">AC</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Alata Craft</h1>
+                        <p class="text-primary-200 text-sm">Professional POS System</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="text-right mr-4">
+                        <div id="currentTime" class="text-sm text-primary-200"></div>
+                        <div class="text-lg font-semibold">Transaction #<span id="transactionId">001</span></div>
+                    </div>
+                    <button id="historyBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                        📊 History
+                    </button>
+                    <button id="settingsBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors" onclick="showDatabaseInfo()">
+                        💾 Database
+                    </button>
+                    <!-- Tools Dropdown -->
+                    <div class="relative" id="tools-menu-container">
+                        <button id="toolsBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
+                            <span>🛠️ Tools</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="toolsDropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                            <a href="catalog.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📦 Product Catalog</a>
+                            <a href="kwitansi.html" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📄 Buat Kwitansi (Simple)</a>
+                            <a href="kwitansi-classic.html" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📄 Buat Kwitansi (Classic)</a>
+                            <a href="nota.html" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">🧾 Buat Nota</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Database Status Indicator -->
+    <div id="dbStatus" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-2 text-sm text-center no-print">
+        <span id="dbStatusText">🔄 Initializing database...</span>
+    </div>
+
+    <div class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
+            <!-- Products Section -->
+            <div class="lg:col-span-2">
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="card p-4 text-center">
+                        <div class="text-2xl font-bold text-primary-600" id="totalProducts">13</div>
+                        <div class="text-sm text-gray-600">Total Products</div>
+                    </div>
+                    <div class="card p-4 text-center">
+                        <div class="text-2xl font-bold text-green-600" id="todaySales">Rp 0</div>
+                        <div class="text-sm text-gray-600">Today's Sales</div>
+                    </div>
+                    <div class="card p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-600" id="totalTransactions">0</div>
+                        <div class="text-sm text-gray-600">Transactions</div>
+                    </div>
+                    <div class="card p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-600" id="avgTransaction">Rp 0</div>
+                        <div class="text-sm text-gray-600">Avg. Sale</div>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="card p-4 mb-6">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div class="flex-1">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                placeholder="Search products by name, category, or code..."
+                                class="input-field"
+                            >
+                        </div>
+                        <select id="categoryFilter" class="input-field sm:w-48">
+                            <option value="">All Categories</option>
+                            <option value="Bahan Produksi">Bahan Produksi</option>
+                            <option value="Alat Produksi">Alat Produksi</option>
+                            <option value="Bahan Baku">Bahan Baku</option>
+                            <option value="Komponen Produksi">Komponen Produksi</option>
+                        </select>
+                        <select id="stockFilter" class="input-field sm:w-40">
+                            <option value="">All Stock</option>
+                            <option value="in-stock">In Stock</option>
+                            <option value="low-stock">Low Stock</option>
+                            <option value="out-of-stock">Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <!-- Products will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <!-- Cart Section -->
+            <div class="lg:col-span-1">
+                <div class="card p-6 sticky top-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-bold text-gray-800">Shopping Cart</h2>
+                        <span id="cartCount" class="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-sm font-medium">0 items</span>
+                    </div>
+                    
+                    <div id="cartItems" class="space-y-3 mb-6 max-h-96 overflow-y-auto">
+                        <div id="emptyCart" class="text-center text-gray-500 py-8">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl">
+                                🛒
+                            </div>
+                            <p class="font-medium">Your cart is empty</p>
+                            <p class="text-sm">Add some products to get started</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span>Items:</span>
+                                <span id="itemCount">0</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>Tax (0%):</span>
+                                <span id="tax">Rp 0</span>
+                            </div>
+                            <div class="flex justify-between font-bold text-lg border-t pt-2">
+                                <span>Total:</span>
+                                <span id="total">Rp 0</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <button id="checkoutBtn" class="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed text-lg py-3" disabled>
+                                💳 Checkout
+                            </button>
+                            
+                            <div class="grid grid-cols-2 gap-2">
+                                <button id="holdTransactionBtn" class="btn-secondary text-sm">
+                                    ⏸️ Hold
+                                </button>
+                                <button id="clearCartBtn" class="btn-secondary text-sm">
+                                    🗑️ Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-container">
+        <!-- Checkout Modal -->
+        <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50 no-print">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-lg w-full p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold">💳 Checkout</h3>
+                        <button id="closeCheckoutModal" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <h4 class="font-semibold mb-3">Order Summary</h4>
+                        <div id="checkoutItems" class="space-y-2 max-h-32 overflow-y-auto"></div>
+                        <div class="border-t pt-3 mt-3">
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Total Amount:</span>
+                                <span id="checkoutTotal">Rp 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Payment Method</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="payment-method-btn active" data-method="cash">
+                                <div class="text-2xl mb-2">💵</div>
+                                <div class="font-medium">Cash</div>
+                            </button>
+                            <button class="payment-method-btn" data-method="transfer">
+                                <div class="text-2xl mb-2">🏦</div>
+                                <div class="font-medium">Transfer</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="cashPayment" class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cash Received</label>
+                        <input type="number" id="cashAmount" placeholder="Enter cash amount" class="input-field text-lg">
+                        <div id="changeAmount" class="text-sm mt-2"></div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Customer Name (Optional)</label>
+                        <input type="text" id="customerName" placeholder="Enter customer name" class="input-field">
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <button id="confirmCheckout" class="flex-1 btn-primary text-lg py-3">
+                            ✅ Confirm Payment
+                        </button>
+                        <button id="cancelCheckout" class="flex-1 btn-secondary text-lg py-3">
+                            ❌ Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Modal -->
+        <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4 no-print">
+                        <h3 class="text-xl font-bold">🧾 Receipt</h3>
+                        <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                    </div>
+
+                    <div id="receipt-content" class="text-sm receipt-content"></div>
+                    
+                    <div class="flex space-x-3 mt-6 no-print">
+                        <button onclick="handlePrint('receipt-content')" class="flex-1 btn-primary">
+                            🖨️ Print Receipt
+                        </button>
+                        <button class="flex-1 btn-secondary close-modal-btn">
+                            ✅ Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History Modal -->
+        <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50 no-print">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-5xl w-full p-6 max-h-[90vh] flex flex-col">
+                    <div class="flex items-center justify-between mb-6 flex-shrink-0">
+                        <h3 class="text-2xl font-bold">📊 Transaction History</h3>
+                        <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                    </div>
+                    
+                    <div class="mb-4 flex-shrink-0">
+                        <input type="date" id="historyDate" class="input-field w-auto">
+                    </div>
+
+                    <div id="transactionHistory" class="space-y-4 overflow-y-auto flex-grow"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kwitansi Modal (Struk Format) -->
+        <div id="kwitansiModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6 no-print">
+                        <h3 class="text-2xl font-bold">📄 Kwitansi Struk</h3>
+                        <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                    </div>
+                    <div id="kwitansi-content" class="font-mono text-sm p-4 bg-white">
+                        <div class="text-center mb-4">
+                            <h2 class="text-lg font-bold" id="kwitansiBusinessName">Alata Craft</h2>
+                            <p class="text-xs" id="kwitansiBusinessAddress">Jl. Kerajinan No. 123, Indonesia</p>
+                        </div>
+                        <div class="border-t-2 border-b-2 border-dashed border-black py-2 mb-2 text-xs">
+                            <div class="flex justify-between"><span>No:</span><span id="kwitansiNo"></span></div>
+                            <div class="flex justify-between"><span>Tanggal:</span><span id="kwitansiDate"></span></div>
+                            <div class="flex justify-between"><span>Pelanggan:</span><span id="kwitansiCustomer"></span></div>
+                        </div>
+                        <p class="text-xs mb-2">Untuk pembayaran: <span id="kwitansiDesc"></span></p>
+                        <div class="border-t border-dashed border-black pt-2 mt-2">
+                            <p class="text-xs uppercase">Uang Sejumlah:</p>
+                            <p class="text-center font-semibold italic my-2" id="kwitansiTerbilang"></p>
+                        </div>
+                        <div class="border-t-2 border-dashed border-black pt-2 mt-2">
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>TOTAL</span>
+                                <span id="kwitansiTotal"></span>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4 text-xs">
+                            <p>Penerima,</p>
+                            <div class="h-12"></div>
+                            <p>( <span id="kwitansiReceiver"></span> )</p>
+                        </div>
+                        <p class="text-center mt-4 text-xs">--- Terima Kasih ---</p>
+                    </div>
+                    <div class="flex space-x-3 mt-8 no-print">
+                        <button onclick="handlePrint('kwitansi-content')" class="flex-1 btn-primary">
+                            🖨️ Print Struk
+                        </button>
+                        <button class="flex-1 btn-secondary close-modal-btn">
+                            ✅ Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nota Modal (Struk Format) -->
+        <div id="notaModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6 no-print">
+                        <h3 class="text-2xl font-bold">🧾 Struk Pembelian</h3>
+                        <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                    </div>
+                    <div id="nota-content" class="font-mono text-sm p-4 bg-white">
+                        <div class="text-center mb-4">
+                            <h2 class="text-lg font-bold">Alata Craft</h2>
+                            <p class="text-xs">Jl. Kerajinan No. 123, Indonesia</p>
+                        </div>
+                        <div class="border-t-2 border-b-2 border-dashed border-black py-2 mb-2 text-xs">
+                            <div class="flex justify-between"><span>No. Nota:</span><span id="notaNo"></span></div>
+                            <div class="flex justify-between"><span>Tanggal:</span><span id="notaDate"></span></div>
+                            <div class="flex justify-between"><span>Kepada:</span><span id="notaCustomer"></span></div>
+                        </div>
+                        <table class="w-full text-xs">
+                            <thead>
+                                <tr class="border-b border-dashed border-black">
+                                    <th class="text-left py-1">Barang</th>
+                                    <th class="text-right py-1">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="notaItemsTable">
+                                <!-- Items will be populated here -->
+                            </tbody>
+                        </table>
+                        <div class="border-t-2 border-dashed border-black pt-2 mt-2 text-xs">
+                            <div class="flex justify-between"><span>Subtotal</span><span id="notaSubtotal"></span></div>
+                            <div class="flex justify-between"><span>Pajak (0%)</span><span>Rp 0</span></div>
+                        </div>
+                        <div class="border-t border-dashed border-black pt-2 mt-2">
+                            <div class="flex justify-between font-bold">
+                                <span>TOTAL</span>
+                                <span id="notaTotal"></span>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4 text-xs">--- Terima Kasih ---</div>
+                    </div>
+                    <div class="flex space-x-3 mt-8 no-print">
+                        <button onclick="handlePrint('nota-content')" class="flex-1 btn-primary">
+                            🖨️ Print Struk
+                        </button>
+                        <button class="flex-1 btn-secondary close-modal-btn">
+                            ✅ Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="script.js"></script>
+    
+    <script>
+        // Database status management
+        function updateDatabaseStatus(status, message) {
+            const statusEl = document.getElementById('dbStatus');
+            const statusTextEl = document.getElementById('dbStatusText');
+            
+            statusEl.className = `border-l-4 p-2 text-sm text-center no-print ${
+                status === 'success' ? 'bg-green-100 border-green-500 text-green-700' :
+                status === 'error' ? 'bg-red-100 border-red-500 text-red-700' :
+                'bg-yellow-100 border-yellow-500 text-yellow-700'
+            }`;
+            statusTextEl.textContent = message;
+        }
+
+        function showDatabaseInfo() {
+            if (window.alataCraftDB && window.alataCraftDB.db) {
+                alert(`🗃️ Database Status: Connected
+📊 Database: ${window.alataCraftDB.dbName} v${window.alataCraftDB.version}
+💾 Storage: IndexedDB (Persistent Local Storage)
+🔧 Features: Advanced queries, analytics, data export/import
+
+Console Commands:
+- dbManager.exportData() - Export all data
+- dbManager.importData(jsonString) - Import data
+- dbManager.getAnalytics() - View analytics`);
+            } else {
+                alert('❌ Database not available. Using fallback localStorage mode.');
+            }
+        }
+
+        // Update database status when database is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (window.alataCraftDB && window.alataCraftDB.db) {
+                    updateDatabaseStatus('success', '✅ Advanced Local Database Connected - Full POS Features Available');
+                } else {
+                    updateDatabaseStatus('error', '⚠️ Database Error - Running in Fallback Mode');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

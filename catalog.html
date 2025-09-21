@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Catalog - Alata Craft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-cream-300 rounded-lg flex items-center justify-center">
+                        <span class="font-bold text-primary-800 text-lg">AC</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Alata Craft</h1>
+                        <p class="text-primary-200 text-sm">Product Catalog</p>
+                    </div>
+                </div>
+                <a href="index.html" class="bg-primary-700 hover:bg-primary-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    🛒 Back to POS
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex flex-col md:flex-row items-center justify-between mb-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 md:mb-0">📦 Product Management</h2>
+            <button id="addNewProductBtn" class="btn-primary w-full md:w-auto">
+                ➕ Add New Product
+            </button>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="card p-4 mb-6">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <input type="text" id="catalogSearchInput" placeholder="Search products..." class="input-field flex-1">
+                <select id="catalogCategoryFilter" class="input-field sm:w-48">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-600">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Code</th>
+                        <th scope="col" class="px-6 py-3">Name</th>
+                        <th scope="col" class="px-6 py-3">Category</th>
+                        <th scope="col" class="px-6 py-3 text-center">Stock</th>
+                        <th scope="col" class="px-6 py-3 text-right">Price</th>
+                        <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <!-- Product rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Product Form Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-2xl w-full p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 id="productModalTitle" class="text-2xl font-bold">Add New Product</h3>
+                    <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                </div>
+                <form id="productForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="productKode" class="block text-sm font-medium text-gray-700 mb-1">Product Code</label>
+                        <input type="text" id="productKode" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="productNama" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                        <input type="text" id="productNama" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="productKategori" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select id="productKategori" class="input-field" required></select>
+                    </div>
+                     <div>
+                        <label for="productSatuan" class="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                        <input type="text" id="productSatuan" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="productVolume" class="block text-sm font-medium text-gray-700 mb-1">Stock (Volume)</label>
+                        <input type="number" id="productVolume" class="input-field" required min="0">
+                    </div>
+                    <div>
+                        <label for="productHarga" class="block text-sm font-medium text-gray-700 mb-1">Price (IDR)</label>
+                        <input type="number" id="productHarga" class="input-field" required min="0">
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" id="saveProductBtn" class="btn-primary w-full py-3 text-lg">
+                            Save Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-sm w-full p-6 text-center">
+                <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
+                <p class="text-gray-600 mb-6">Do you really want to delete this product? This process cannot be undone.</p>
+                <div class="flex justify-center space-x-4">
+                    <button id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg">Delete</button>
+                    <button id="cancelDeleteBtn" class="btn-secondary px-6 py-2">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="catalog.js"></script>
+</body>
+</html>
