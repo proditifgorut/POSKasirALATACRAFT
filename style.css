@@ -252,54 +252,12 @@
     flex-direction: column;
 }
 
-/* Main container for vertical stacking */
-.receipt-main-flex-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-/* Top section for the car image */
-.receipt-image-column {
-    flex-shrink: 0;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-    border-bottom: 1px dashed #000;
-}
-.receipt-image-column img {
-    width: 100%;
-    max-height: 150px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-/* Bottom section for all text details */
-.receipt-details-column {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Header within the details column */
+/* Header for the receipt */
 .receipt-header {
-    text-align: center;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #000;
 }
-.receipt-header h1 {
-    font-family: 'Inter', sans-serif;
-    font-weight: bold;
-    font-size: 14pt;
-}
-.receipt-header h2 {
-    font-family: 'Inter', sans-serif;
-    font-weight: bold;
-    font-size: 11pt;
-}
-.receipt-header p {
-    font-size: 8pt;
-    margin: 0;
-}
+/* Font sizes are now controlled by Tailwind classes in the HTML for consistency */
 
 /* Body (main content) of the receipt */
 .receipt-body {
@@ -311,7 +269,7 @@
 }
 .receipt-label {
     font-weight: bold;
-    flex: 0 0 120px; /* Fixed width for labels */
+    flex: 0 0 100px; /* Adjusted width for labels */
 }
 .receipt-value {
     flex: 1;
@@ -322,16 +280,144 @@
     margin-top: auto;
     padding-top: 0.5rem;
     border-top: 1px dashed #000;
-    text-align: right;
+}
+
+/* --- SHIPPING LABEL (100x150mm) STYLES --- */
+#shipping-label-preview-container {
+    width: 100%;
+    max-width: 400px; /* 100mm is about 393px */
+    aspect-ratio: 100 / 150;
+    margin: 0 auto;
+    padding: 1rem;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: white;
+}
+
+#shipping-label-printable-area {
+    font-family: 'Inter', sans-serif;
+    font-size: 8pt;
+    color: #000;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    padding: 8px;
+}
+
+.label-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid black;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+.label-header .courier-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.label-header .service-type {
+    border: 2px solid black;
+    padding: 4px 8px;
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+.label-section {
+    border-bottom: 1px solid black;
+    padding: 8px 0;
+}
+.label-section:last-child {
+    border-bottom: none;
+}
+.label-section-title {
+    font-weight: bold;
+    font-size: 7pt;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+.label-recipient-details {
+    font-weight: bold;
+    font-size: 11pt;
+}
+.label-recipient-address {
+    font-size: 10pt;
+    line-height: 1.4;
+}
+
+.label-barcode-section {
+    text-align: center;
+    padding: 8px 0;
+}
+.label-barcode {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='50'%3E%3Cdefs%3E%3Cpattern id='barcode' patternUnits='userSpaceOnUse' width='10' height='50'%3E%3Crect x='0' y='0' width='10' height='50' fill='white'/%3E%3Crect x='0' y='0' width='1' height='50' fill='black'/%3E%3Crect x='2' y='0' width='2' height='50' fill='black'/%3E%3Crect x='5' y='0' width='1' height='50' fill='black'/%3E%3Crect x='7' y='0' width='1' height='50' fill='black'/%3E%3Crect x='9' y='0' width='1' height='50' fill='black'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='200' height='50' fill='url(%23barcode)'/%3E%3C/svg%3E");
+    height: 50px;
+    background-repeat: repeat-x;
+    margin: 4px auto;
+}
+.label-awb {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: bold;
+    font-size: 14pt;
+    letter-spacing: 2px;
+}
+
+.label-order-details {
+    font-size: 7pt;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+}
+
+.label-items-list {
+    font-size: 7pt;
+    padding-left: 1rem;
+    list-style-type: disc;
+}
+
+.label-footer {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.label-qr-code {
+    width: 60px;
+    height: 60px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 33 33' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M0 0h7v7H0zM9 0h7v7H9zM18 0h7v7h-7zM27 0h6v6h-6zM0 9h7v7H0zM0 18h7v7H0zM0 27h6v6H0zM9 9h7v7H9zM9 18h7v7H9zM9 27h6v6H9zM18 9h7v7h-7zM18 18h7v7h-7zM18 27h6v6h-6zM27 9h6v7h-6zM27 18h6v7h-6zM27 27h6v6h-6z'/%3E%3Cpath fill='%23fff' d='M2 2h3v3H2zM11 2h3v3h-3zM20 2h3v3h-3zM2 11h3v3H2zM2 20h3v3H2zM11 11h3v3h-3zM11 20h3v3h-3zM20 11h3v3h-3zM20 20h3v3h-3zM29 2h2v2h-2zM29 11h2v3h-2zM29 20h2v3h-2zM2 29h2v2H2zM11 29h2v2h-2zM20 29h2v2h-2zM29 29h2v2h-2z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.label-notes {
+    flex-grow: 1;
+    padding-left: 8px;
+    font-size: 7pt;
 }
 
 
 /* --- UNIFIED PRINT STYLES --- */
 @media print {
-    /* This is the generic rule for A4 documents like Nota and Kwitansi */
+    body.printing-shipping-label {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
     @page {
         size: A4;
         margin: 0;
+    }
+
+    @page shipping-label {
+        size: 100mm 150mm;
+        margin: 5mm;
+    }
+
+    body.printing-shipping-label .printable {
+        page: shipping-label;
     }
 
     /* Hide everything by default when printing */
@@ -364,9 +450,12 @@
     }
 
     /* Remove screen-only styling from templates */
-    [class*="kwitansi-template-"], [class*="nota-template-"] {
+    [class*="kwitansi-template-"], [class*="nota-template-"], #shipping-label-printable-area {
         border: none !important;
         box-shadow: none !important;
+    }
+    #shipping-label-printable-area {
+        border: 2px solid black !important;
     }
 
     /* --- Specific styles for the POS receipt --- */

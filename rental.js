@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set default values
     const today = new Date();
     noInput.value = `OT/${today.getFullYear()}/${String(Date.now()).slice(-6)}`;
-    dateInput.value = today.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    // Set default date for date picker in YYYY-MM-DD format
+    dateInput.value = today.toISOString().split('T')[0];
 
     // Function to populate data into the preview
     const populatePreview = () => {
@@ -36,10 +37,22 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('print-rental-customer').textContent = document.getElementById('form-rental-customer').value || '-';
         
         const amountEl = document.getElementById('print-rental-amount');
-        amountEl.innerHTML = `<span>${amountInWords}</span><span class="font-bold ml-2">(${formattedNumericAmount})</span>`;
+        amountEl.innerHTML = `<span class="font-bold mr-2">${formattedNumericAmount}</span><span>(${amountInWords})</span>`;
 
         document.getElementById('print-rental-for').textContent = document.getElementById('form-rental-for').value || '-';
-        document.getElementById('print-rental-date').textContent = dateInput.value || '-';
+        
+        // Format the date from the date picker for display
+        const dateValue = dateInput.value;
+        let formattedDate = '-';
+        if (dateValue) {
+            // Input value is "YYYY-MM-DD". We need to construct a date object carefully
+            // to avoid timezone issues.
+            const [year, month, day] = dateValue.split('-');
+            const dateObj = new Date(year, month - 1, day);
+            formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        document.getElementById('print-rental-date').textContent = formattedDate;
+
         document.getElementById('print-rental-plate').textContent = document.getElementById('form-rental-plate').value || '-';
         
         // Handle image upload
