@@ -56,7 +56,7 @@
                     <button id="historyBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
                         📊 History
                     </button>
-                    <button id="settingsBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors" onclick="showDatabaseInfo()">
+                    <button id="dbInfoBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
                         💾 Database
                     </button>
                     <!-- Invoice Dropdown -->
@@ -87,16 +87,39 @@
         </div>
     </header>
 
-    <!-- Database Status Indicator -->
-    <div id="dbStatus" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-2 text-sm text-center no-print flex items-center justify-center gap-4">
-        <span id="dbStatusText">🔄 Initializing database...</span>
-        <button id="dbErrorHelpBtn" class="hidden bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-xs font-bold hover:bg-yellow-300 transition-colors">
-            Troubleshoot
-        </button>
-    </div>
-
     <div class="container mx-auto px-4 py-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
+        <!-- Fullscreen DB Error State -->
+        <div id="db-error-fullscreen" class="hidden text-center py-12 px-6 bg-white rounded-lg shadow-md border border-red-200">
+            <div class="relative mx-auto w-24 h-24 flex items-center justify-center bg-red-100 rounded-full mb-6">
+                <span class="text-5xl">🗄️</span>
+                <span class="absolute -top-1 -right-1 text-4xl">⚠️</span>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-3">Database Connection Failed</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto mb-6">
+                The application couldn't connect to the advanced local database (IndexedDB). This can happen in private/incognito windows or if browser storage is restricted.
+            </p>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 text-left max-w-2xl mx-auto mb-8 rounded-r-lg">
+                <h4 class="font-bold">You are in Fallback Mode</h4>
+                <p class="text-sm">You can still use the POS, but your data might not be saved reliably after you close the browser tab. Advanced features like reporting will be unavailable.</p>
+            </div>
+
+            <div class="text-left max-w-2xl mx-auto mb-8">
+                <h4 class="font-semibold text-gray-700 mb-2">What you can do:</h4>
+                <ul class="list-disc list-inside text-gray-600 space-y-1 text-sm">
+                    <li>Use a standard (non-private/incognito) browser window for full features.</li>
+                    <li>Ensure your browser settings allow websites to save data locally.</li>
+                    <li>Click "Try to Reconnect" which will reload the page.</li>
+                </ul>
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button id="continue-in-fallback" class="btn-secondary px-6 py-3">Continue in Fallback Mode</button>
+                <button id="try-reconnect" class="btn-primary px-6 py-3">🔄 Try to Reconnect</button>
+            </div>
+        </div>
+        
+        <div id="main-content-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
             <!-- Products Section -->
             <div class="lg:col-span-2">
                 <!-- Quick Stats -->
@@ -309,116 +332,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- Database Error Modal -->
-        <div id="dbErrorModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50 no-print">
-            <div class="flex items-center justify-center min-h-screen p-4">
-                <div class="bg-white rounded-lg max-w-lg w-full p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mr-4">
-                            <span class="text-2xl">⚠️</span>
-                        </div>
-                        <h3 class="text-2xl font-bold text-red-700">Database Connection Error</h3>
-                    </div>
-                    
-                    <div class="text-gray-700 space-y-3 mb-6">
-                        <p>The application could not connect to the advanced local database (IndexedDB). This might happen if you are using a private/incognito browser window or if your browser's storage is disabled.</p>
-                        <p><strong>You can still use the app in a limited "Fallback Mode"</strong>, but data will be less reliable and some advanced features might be unavailable.</p>
-                    </div>
-
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h4 class="font-semibold mb-2">How to fix this:</h4>
-                        <ul class="list-disc list-inside text-sm space-y-1">
-                            <li>Use a standard (non-private) browser window.</li>
-                            <li>Ensure your browser settings allow websites to save data.</li>
-                            <li>Try clearing your browser's cache and site data for this page and then reload.</li>
-                        </ul>
-                    </div>
-
-                    <div class="flex justify-end space-x-3 mt-6">
-                        <button id="continueFallbackBtn" class="btn-secondary">Continue in Fallback Mode</button>
-                        <button onclick="location.reload()" class="btn-primary">Reload Page</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <script src="utils.js"></script>
     <script src="database.js"></script>
     <script src="script.js"></script>
-    
-    <script>
-        // Database status management
-        function updateDatabaseStatus(status, message) {
-            const statusEl = document.getElementById('dbStatus');
-            const statusTextEl = document.getElementById('dbStatusText');
-            const helpBtn = document.getElementById('dbErrorHelpBtn');
-            
-            statusEl.className = `border-l-4 p-2 text-sm text-center no-print flex items-center justify-center gap-4 ${
-                status === 'success' ? 'bg-green-100 border-green-500 text-green-700' :
-                status === 'error' ? 'bg-red-100 border-red-500 text-red-700' :
-                'bg-yellow-100 border-yellow-500 text-yellow-700'
-            }`;
-            statusTextEl.textContent = message;
-
-            if (status === 'error') {
-                helpBtn.classList.remove('hidden');
-            } else {
-                helpBtn.classList.add('hidden');
-            }
-        }
-
-        function showDatabaseInfo() {
-            if (window.alataCraftDB && window.alataCraftDB.db) {
-                alert(`🗃️ Database Status: Connected
-📊 Database: ${window.alataCraftDB.dbName} v${window.alataCraftDB.version}
-💾 Storage: IndexedDB (Persistent Local Storage)
-🔧 Features: Advanced queries, analytics, data export/import
-
-Console Commands:
-- dbManager.exportData() - Export all data
-- dbManager.importData(jsonString) - Import data
-- dbManager.getAnalytics() - View analytics`);
-            } else {
-                alert('❌ Database not available. Using fallback localStorage mode.');
-            }
-        }
-
-        // Update database status when database is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                if (window.alataCraftDB && window.alataCraftDB.db) {
-                    updateDatabaseStatus('success', '✅ Advanced Local Database Connected - Full POS Features Available');
-                } else {
-                    updateDatabaseStatus('error', '⚠️ Database Error - Running in Fallback Mode. Some features may be limited.');
-                }
-            }, 2000);
-
-            // DB Error Modal Logic
-            const dbErrorHelpBtn = document.getElementById('dbErrorHelpBtn');
-            const dbErrorModal = document.getElementById('dbErrorModal');
-            const continueFallbackBtn = document.getElementById('continueFallbackBtn');
-
-            if (dbErrorHelpBtn) {
-                dbErrorHelpBtn.addEventListener('click', () => {
-                    dbErrorModal.classList.remove('hidden');
-                });
-            }
-            if (continueFallbackBtn) {
-                continueFallbackBtn.addEventListener('click', () => {
-                    dbErrorModal.classList.add('hidden');
-                });
-            }
-            if (dbErrorModal) {
-                dbErrorModal.addEventListener('click', (e) => {
-                    if (e.target === dbErrorModal) {
-                        dbErrorModal.classList.add('hidden');
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>

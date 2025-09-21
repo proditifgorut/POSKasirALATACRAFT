@@ -29,12 +29,36 @@ let currentDailyStats = {
 // Database instance
 let db = null;
 
+// DOM elements
+const productsGrid = document.getElementById('productsGrid');
+const cartItems = document.getElementById('cartItems');
+const emptyCart = document.getElementById('emptyCart');
+const searchInput = document.getElementById('searchInput');
+const categoryFilter = document.getElementById('categoryFilter');
+const stockFilter = document.getElementById('stockFilter');
+const allModals = document.querySelectorAll('.modal');
+const toolsBtn = document.getElementById('toolsBtn');
+const toolsDropdown = document.getElementById('toolsDropdown');
+const invoiceBtn = document.getElementById('invoiceBtn');
+const invoiceDropdown = document.getElementById('invoiceDropdown');
+const dbInfoBtn = document.getElementById('dbInfoBtn');
+
+// DB Error Screen Elements
+const dbErrorFullscreen = document.getElementById('db-error-fullscreen');
+const mainContentGrid = document.getElementById('main-content-grid');
+const continueInFallbackBtn = document.getElementById('continue-in-fallback');
+const tryReconnectBtn = document.getElementById('try-reconnect');
+
+
 // Initialize database and load data
 async function initializeDatabase() {
     try {
         db = window.alataCraftDB;
         await db.init();
         console.log('✅ Database initialized successfully');
+        
+        mainContentGrid.classList.remove('hidden');
+        dbErrorFullscreen.classList.add('hidden');
         
         const existingProducts = await db.getProducts();
         
@@ -60,10 +84,14 @@ async function initializeDatabase() {
         }
         
         await loadData();
+        showNotification('✅ Advanced Local Database Connected', 'success');
         
     } catch (error) {
         console.error('❌ Database initialization failed:', error);
-        showNotification('Database initialization failed. Using fallback mode.', 'error');
+        
+        mainContentGrid.classList.add('hidden');
+        dbErrorFullscreen.classList.remove('hidden');
+
         loadDataFromLocalStorage();
     }
 }
@@ -118,19 +146,6 @@ async function saveData() {
         console.error('❌ Error saving data:', error);
     }
 }
-
-// DOM elements
-const productsGrid = document.getElementById('productsGrid');
-const cartItems = document.getElementById('cartItems');
-const emptyCart = document.getElementById('emptyCart');
-const searchInput = document.getElementById('searchInput');
-const categoryFilter = document.getElementById('categoryFilter');
-const stockFilter = document.getElementById('stockFilter');
-const allModals = document.querySelectorAll('.modal');
-const toolsBtn = document.getElementById('toolsBtn');
-const toolsDropdown = document.getElementById('toolsDropdown');
-const invoiceBtn = document.getElementById('invoiceBtn');
-const invoiceDropdown = document.getElementById('invoiceDropdown');
 
 // Utility functions
 function getCurrentTime() {
@@ -596,6 +611,22 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
+function showDatabaseInfo() {
+    if (db && db.db) {
+        alert(`🗃️ Database Status: Connected
+📊 Database: ${db.dbName} v${db.version}
+💾 Storage: IndexedDB (Persistent Local Storage)
+🔧 Features: Advanced queries, analytics, data export/import
+
+Console Commands:
+- dbManager.exportData() - Export all data
+- dbManager.importData(jsonString) - Import data
+- dbManager.getAnalytics() - View analytics`);
+    } else {
+        alert('❌ Database not available. Using fallback localStorage mode.');
+    }
+}
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', async function() {
     searchInput.addEventListener('input', filterProducts);
@@ -604,6 +635,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('checkoutBtn').addEventListener('click', openCheckoutModal);
     document.getElementById('clearCartBtn').addEventListener('click', clearCart);
     document.getElementById('historyBtn').addEventListener('click', openHistoryModal);
+    dbInfoBtn.addEventListener('click', showDatabaseInfo);
+
+    tryReconnectBtn.addEventListener('click', () => {
+        tryReconnectBtn.textContent = 'Reloading...';
+        tryReconnectBtn.disabled = true;
+        location.reload();
+    });
+
+    continueInFallbackBtn.addEventListener('click', () => {
+        dbErrorFullscreen.classList.add('hidden');
+        mainContentGrid.classList.remove('hidden');
+        showNotification('⚠️ Running in Fallback Mode. Data may not be saved.', 'error');
+    });
 
     document.getElementById('confirmCheckout').addEventListener('click', processCheckout);
     document.getElementById('cashAmount').addEventListener('input', calculateChange);
@@ -668,7 +712,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     setInterval(updateTime, 1000);
     setInterval(saveData, 30000);
     
-    showNotification('🌿 Welcome to Alata Craft POS System!', 'success');
+    if (!db) {
+        showNotification('🌿 Welcome to Alata Craft POS System!', 'success');
+    }
 });
 
 window.addEventListener('beforeunload', saveData);
