@@ -17,7 +17,7 @@
     <meta name="twitter:description" content="Point of Sale system for Alata Craft - Water hyacinth craft business with advanced local database" />
 
     <link rel="canonical" href="https://alpha.dualite.dev" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Roboto+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 
     <script type="application/ld+json">
@@ -59,6 +59,18 @@
                     <button id="settingsBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors" onclick="showDatabaseInfo()">
                         💾 Database
                     </button>
+                    <!-- Invoice Dropdown -->
+                    <div class="relative" id="invoice-menu-container">
+                        <button id="invoiceBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
+                            <span>📄 Invoice</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="invoiceDropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                            <a href="kwitansi.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">🧾 Generate Kwitansi</a>
+                            <a href="nota.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📝 Generate Nota</a>
+                            <a href="rental.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">🚗 Generate Rental Receipt</a>
+                        </div>
+                    </div>
                     <!-- Tools Dropdown -->
                     <div class="relative" id="tools-menu-container">
                         <button id="toolsBtn" class="bg-primary-700 hover:bg-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
@@ -67,9 +79,6 @@
                         </button>
                         <div id="toolsDropdown" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 hidden">
                             <a href="catalog.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📦 Product Catalog</a>
-                            <a href="kwitansi.html" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📄 Buat Kwitansi (Simple)</a>
-                            <a href="kwitansi-classic.html" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📄 Buat Kwitansi (Classic)</a>
-                            <a href="nota.html" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">🧾 Buat Nota</a>
                         </div>
                     </div>
                 </div>
@@ -297,108 +306,9 @@
             </div>
         </div>
 
-        <!-- Kwitansi Modal (Struk Format) -->
-        <div id="kwitansiModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50">
-            <div class="bg-white rounded-lg max-w-md w-full">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-6 no-print">
-                        <h3 class="text-2xl font-bold">📄 Kwitansi Struk</h3>
-                        <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-                    </div>
-                    <div id="kwitansi-content" class="font-mono text-sm p-4 bg-white">
-                        <div class="text-center mb-4">
-                            <h2 class="text-lg font-bold" id="kwitansiBusinessName">Alata Craft</h2>
-                            <p class="text-xs" id="kwitansiBusinessAddress">Jl. Kerajinan No. 123, Indonesia</p>
-                        </div>
-                        <div class="border-t-2 border-b-2 border-dashed border-black py-2 mb-2 text-xs">
-                            <div class="flex justify-between"><span>No:</span><span id="kwitansiNo"></span></div>
-                            <div class="flex justify-between"><span>Tanggal:</span><span id="kwitansiDate"></span></div>
-                            <div class="flex justify-between"><span>Pelanggan:</span><span id="kwitansiCustomer"></span></div>
-                        </div>
-                        <p class="text-xs mb-2">Untuk pembayaran: <span id="kwitansiDesc"></span></p>
-                        <div class="border-t border-dashed border-black pt-2 mt-2">
-                            <p class="text-xs uppercase">Uang Sejumlah:</p>
-                            <p class="text-center font-semibold italic my-2" id="kwitansiTerbilang"></p>
-                        </div>
-                        <div class="border-t-2 border-dashed border-black pt-2 mt-2">
-                            <div class="flex justify-between font-bold text-lg">
-                                <span>TOTAL</span>
-                                <span id="kwitansiTotal"></span>
-                            </div>
-                        </div>
-                        <div class="text-center mt-4 text-xs">
-                            <p>Penerima,</p>
-                            <div class="h-12"></div>
-                            <p>( <span id="kwitansiReceiver"></span> )</p>
-                        </div>
-                        <p class="text-center mt-4 text-xs">--- Terima Kasih ---</p>
-                    </div>
-                    <div class="flex space-x-3 mt-8 no-print">
-                        <button onclick="handlePrint('kwitansi-content')" class="flex-1 btn-primary">
-                            🖨️ Print Struk
-                        </button>
-                        <button class="flex-1 btn-secondary close-modal-btn">
-                            ✅ Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Nota Modal (Struk Format) -->
-        <div id="notaModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50">
-            <div class="bg-white rounded-lg max-w-md w-full">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-6 no-print">
-                        <h3 class="text-2xl font-bold">🧾 Struk Pembelian</h3>
-                        <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-                    </div>
-                    <div id="nota-content" class="font-mono text-sm p-4 bg-white">
-                        <div class="text-center mb-4">
-                            <h2 class="text-lg font-bold">Alata Craft</h2>
-                            <p class="text-xs">Jl. Kerajinan No. 123, Indonesia</p>
-                        </div>
-                        <div class="border-t-2 border-b-2 border-dashed border-black py-2 mb-2 text-xs">
-                            <div class="flex justify-between"><span>No. Nota:</span><span id="notaNo"></span></div>
-                            <div class="flex justify-between"><span>Tanggal:</span><span id="notaDate"></span></div>
-                            <div class="flex justify-between"><span>Kepada:</span><span id="notaCustomer"></span></div>
-                        </div>
-                        <table class="w-full text-xs">
-                            <thead>
-                                <tr class="border-b border-dashed border-black">
-                                    <th class="text-left py-1">Barang</th>
-                                    <th class="text-right py-1">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody id="notaItemsTable">
-                                <!-- Items will be populated here -->
-                            </tbody>
-                        </table>
-                        <div class="border-t-2 border-dashed border-black pt-2 mt-2 text-xs">
-                            <div class="flex justify-between"><span>Subtotal</span><span id="notaSubtotal"></span></div>
-                            <div class="flex justify-between"><span>Pajak (0%)</span><span>Rp 0</span></div>
-                        </div>
-                        <div class="border-t border-dashed border-black pt-2 mt-2">
-                            <div class="flex justify-between font-bold">
-                                <span>TOTAL</span>
-                                <span id="notaTotal"></span>
-                            </div>
-                        </div>
-                        <div class="text-center mt-4 text-xs">--- Terima Kasih ---</div>
-                    </div>
-                    <div class="flex space-x-3 mt-8 no-print">
-                        <button onclick="handlePrint('nota-content')" class="flex-1 btn-primary">
-                            🖨️ Print Struk
-                        </button>
-                        <button class="flex-1 btn-secondary close-modal-btn">
-                            ✅ Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
+    <script src="utils.js"></script>
     <script src="database.js"></script>
     <script src="script.js"></script>
     

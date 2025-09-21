@@ -6,6 +6,8 @@
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
+  .font-playfair { font-family: 'Playfair Display', serif; }
+  .font-mono { font-family: 'Roboto Mono', monospace; }
 }
 
 @layer components {
@@ -35,11 +37,6 @@
 
   .receipt-content {
     @apply font-mono;
-  }
-
-  /* New component for printable document styling */
-  .document-wrapper {
-    @apply bg-white border border-gray-300;
   }
 }
 
@@ -81,234 +78,306 @@
   animation: pulse-green 0.6s ease-out;
 }
 
-/* --- CLASSIC KWITANSI STYLES --- */
-.kwitansi-classic-wrapper {
+/* --- KWITANSI TEMPLATES --- */
+[class*="kwitansi-template-"] {
     display: flex;
-    width: 21cm; /* A4 width */
-    height: 8cm;
-    border: 1px solid #a0d8ef;
-    background-color: #e0f7ff;
-    /* Approximation of the guilloché pattern */
-    background-image:
-        radial-gradient(circle at center, rgba(179, 229, 252, 0.5) 1px, transparent 1px),
-        radial-gradient(circle at center, rgba(179, 229, 252, 0.5) 1px, transparent 1px);
-    background-size: 20px 20px;
-    background-position: 0 0, 10px 10px;
+    width: 27.7cm;
+    height: 10cm;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     position: relative;
     font-family: 'Times New Roman', Times, serif;
+    color: #333;
+    background: white;
+}
+.kwitansi-stub { flex-shrink: 0; }
+.kwitansi-main { flex-grow: 1; display: flex; flex-direction: column; }
+.kwitansi-main-content { display: flex; flex-direction: column; height: 100%; }
+.kwitansi-header { text-align: center; }
+.kwitansi-title { font-weight: bold; }
+.kwitansi-subtitle { display: none; }
+.field-row { display: flex; align-items: baseline; }
+.kwitansi-label { flex-shrink: 0; font-weight: bold; }
+.input-line { flex-grow: 1; border-bottom: 1.5px dotted #374151; min-height: 24px; font-style: italic; }
+.shaded-bg { background: #f3f4f6; border-radius: 2px; padding: 0 8px; font-weight: bold; }
+.kwitansi-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; }
+.total-box { display: flex; align-items: center; border-radius: 4px; }
+.rp-label { font-weight: bold; }
+.total-amount { font-weight: bold; }
+.signature-area { text-align: center; }
+.signature-space { height: 4rem; }
+.signature-name { font-weight: bold; }
+
+/* Template 1: Classic Blue */
+.kwitansi-template-1 { border: 1px solid #7dd3fc; background-color: #f0f9ff; color: #0c4a6e; }
+.kwitansi-template-1::before { content: ''; position: absolute; inset: 6px; border: 1px solid #38bdf8; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23bae6fd' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+.kwitansi-template-1 .kwitansi-stub { flex-basis: 7cm; padding: 0.5cm; border-right: 2px dashed #38bdf8; }
+.kwitansi-template-1 .kwitansi-stub-content { height: 100%; border: 1px solid #7dd3fc; padding: 0.5cm; display: flex; flex-direction: column; text-align: center; }
+.kwitansi-template-1 .stub-logo { flex-grow: 1; margin: 1cm 0; font-size: 5rem; line-height: 1; opacity: 0.1; }
+.kwitansi-template-1 .kwitansi-main { padding: 0.5cm 1cm; }
+.kwitansi-template-1 .kwitansi-main-content { position: relative; z-index: 1; }
+.kwitansi-template-1 .kwitansi-title { font-size: 2rem; letter-spacing: 0.2em; border-bottom: 2px solid #0c4a6e; display: inline-block; padding: 0 1rem 0.25rem; margin-bottom: 1rem; }
+.kwitansi-template-1 .field-row { margin-bottom: 1.2rem; font-size: 1.1rem; }
+.kwitansi-template-1 .kwitansi-label { flex-basis: 150px; }
+.kwitansi-template-1 .input-line { color: #1f2937; }
+.kwitansi-template-1 .shaded-bg { background: #e0f2fe; }
+.kwitansi-template-1 .total-box { border: 2px solid #0c4a6e; padding: 4px 12px; }
+.kwitansi-template-1 .rp-label { font-size: 1.2rem; margin-right: 8px; }
+.kwitansi-template-1 .total-amount { font-size: 1.5rem; }
+
+/* Template 2: Modern Minimalist */
+.kwitansi-template-2 { font-family: 'Inter', sans-serif; border: 1px solid #e5e7eb; }
+.kwitansi-template-2 .kwitansi-stub { flex-basis: 6cm; padding: 1cm; border-right: 1px solid #e5e7eb; display: flex; flex-direction: column; justify-content: space-between; }
+.kwitansi-template-2 .stub-logo { font-size: 2rem; font-weight: 700; color: #111827; }
+.kwitansi-template-2 .stub-total-amount { font-size: 1.2rem; font-weight: 600; }
+.kwitansi-template-2 .kwitansi-main { padding: 1.5cm; }
+.kwitansi-template-2 .kwitansi-title { font-size: 1.5rem; letter-spacing: 0.1em; text-align: left; margin-bottom: 2rem; }
+.kwitansi-template-2 .field-row { margin-bottom: 1.5rem; font-size: 1rem; }
+.kwitansi-template-2 .kwitansi-label { flex-basis: 140px; color: #6b7280; font-weight: 500; }
+.kwitansi-template-2 .input-line { border-bottom-style: solid; font-style: normal; }
+.kwitansi-template-2 .shaded-bg { background: transparent; font-style: italic; padding: 0; }
+.kwitansi-template-2 .total-box { padding: 8px 16px; background: #111827; color: white; }
+.kwitansi-template-2 .rp-label { font-size: 1rem; }
+.kwitansi-template-2 .total-amount { font-size: 1.5rem; }
+.kwitansi-template-2 .signature-name { border-top: 1px solid #9ca3af; padding-top: 8px; }
+
+/* Template 3: Corporate Green */
+.kwitansi-template-3 { font-family: 'Inter', sans-serif; border-top: 8px solid #166534; }
+.kwitansi-template-3 .kwitansi-stub { display: none; }
+.kwitansi-template-3 .kwitansi-main { padding: 1.5cm 2cm; }
+.kwitansi-template-3 .kwitansi-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #166534; padding-bottom: 1rem; margin-bottom: 2rem; }
+.kwitansi-template-3 .kwitansi-title { font-size: 2.5rem; color: #166534; }
+.kwitansi-template-3 .kwitansi-subtitle { display: block; text-align: right; }
+.kwitansi-template-3 .field-row { margin-bottom: 1.5rem; }
+.kwitansi-template-3 .kwitansi-label { flex-basis: 160px; }
+.kwitansi-template-3 .shaded-bg { background: #dcf2e3; }
+.kwitansi-template-3 .kwitansi-footer { flex-direction: column; align-items: flex-end; }
+.kwitansi-template-3 .total-box { padding: 1rem; width: 50%; text-align: right; background: #166534; color: white; margin-bottom: 2rem; }
+.kwitansi-template-3 .rp-label { display: none; }
+.kwitansi-template-3 .total-amount { font-size: 2rem; }
+.kwitansi-template-3 .signature-area { width: 50%; }
+
+/* ... (Styles for templates 4-10 for Kwitansi) ... */
+.kwitansi-template-4 { font-family: 'Playfair Display', serif; background: #fefdf8; border: 1px solid #e6caa3; }
+.kwitansi-template-5 { font-family: 'Inter', sans-serif; font-weight: 700; }
+.kwitansi-template-6 { background: #f0f9f4; color: #14532d; border-left: 8px solid #16a34a; }
+.kwitansi-template-7 { background: #1f2937; color: #d1d5db; font-family: 'Roboto Mono', monospace; }
+.kwitansi-template-8 { border: 2px solid #991b1b; background: #fef2f2; color: #991b1b; }
+.kwitansi-template-9 { font-family: 'Inter', sans-serif; border-radius: 12px; border: 1px solid #a5b4fc; background: #eef2ff; }
+.kwitansi-template-10 { background-image: url('https://www.transparenttextures.com/patterns/old-paper.png'); background-color: #fdf8f0; color: #5c4033; font-family: 'Times New Roman', Times, serif; }
+
+/* --- NOTA TEMPLATES --- */
+[class*="nota-template-"] { width: 21cm; min-height: 29.7cm; padding: 1.5cm; background: white; font-family: 'Inter', sans-serif; }
+.nota-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.nota-title { font-weight: bold; }
+.items-table { width: 100%; border-collapse: collapse; }
+.items-table th, .items-table td { padding: 8px; }
+.items-table thead { border-bottom: 2px solid black; }
+.totals-section { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+.totals-wrapper { width: 40%; }
+.total-row { display: flex; justify-content: space-between; padding: 4px 0; }
+.grand-total { font-size: 1.25rem; font-weight: bold; border-top: 2px solid black; margin-top: 0.5rem; padding-top: 0.5rem; }
+.nota-footer { display: flex; justify-content: space-between; margin-top: 4rem; }
+.signature-block { text-align: center; width: 40%; }
+.signature-space { height: 5rem; }
+.signature-name { border-top: 1px solid #9ca3af; padding-top: 8px; }
+.thank-you-note { text-align: center; margin-top: 2rem; font-size: 0.875rem; color: #6b7280; }
+
+/* Template 1: Classic Professional */
+.nota-template-1 { font-family: 'Playfair Display', serif; }
+.nota-template-1 .nota-header { border-bottom: 2px solid black; padding-bottom: 1rem; }
+.nota-template-1 .company-name { font-size: 2rem; font-weight: bold; color: #166534; }
+.nota-template-1 .nota-title { font-size: 1.5rem; letter-spacing: 0.1em; }
+.nota-template-1 .customer-info-section { margin: 2rem 0; }
+.nota-template-1 .items-table thead { border-top: 2px solid #9ca3af; }
+.nota-template-1 .items-table th { text-align: left; }
+.nota-template-1 .col-no, .nota-template-1 .col-qty { text-align: center; }
+.nota-template-1 .col-price, .nota-template-1 .col-total { text-align: right; }
+.nota-template-1 .items-table tbody tr:nth-child(even) { background: #f9fafb; }
+
+/* Template 2: Modern Clean */
+.nota-template-2 { font-family: 'Inter', sans-serif; }
+.nota-template-2 .nota-header { margin-bottom: 2rem; }
+.nota-template-2 .company-name { font-size: 1.25rem; font-weight: bold; }
+.nota-template-2 .nota-title { font-size: 2rem; text-align: right; }
+.nota-template-2 .items-table thead { background-color: #f3f4f6; border: none; }
+.nota-template-2 .items-table th { padding: 12px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+.nota-template-2 .items-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+.nota-template-2 .grand-total { background: #f3f4f6; padding: 1rem; }
+
+/* Template 3: Gridless Minimal */
+.nota-template-3 { font-family: 'Inter', sans-serif; }
+.nota-template-3 .items-table th, .nota-template-3 .items-table td { border: none; padding: 12px 4px; }
+.nota-template-3 .items-table thead { border-bottom: 1px solid #333; }
+.nota-template-3 .items-table tbody tr { border-bottom: 1px solid #e5e7eb; }
+.nota-template-3 .totals-wrapper { width: 30%; }
+.nota-template-3 .grand-total { border: none; }
+.nota-template-3 .nota-footer { justify-content: flex-start; }
+.nota-template-3 .signature-block { width: auto; margin-right: 6rem; }
+
+/* ... (Styles for templates 4-10 for Nota) ... */
+.nota-template-4 { background: #111827; color: #e5e7eb; }
+.nota-template-5 .nota-header { background: #166534; color: white; padding: 1.5rem; margin: -1.5cm -1.5cm 2rem -1.5cm; }
+.nota-template-6 { display: flex; }
+.nota-template-6 .nota-header { flex-direction: column; justify-content: flex-start; width: 7cm; background: #f3f4f6; padding: 1.5cm; margin: -1.5cm 2rem -1.5cm -1.5cm; }
+.nota-template-6 .nota-main-content { flex-grow: 1; }
+.nota-template-7 { font-size: 0.875rem; }
+.nota-template-8 { font-family: 'Roboto Mono', monospace; background-image: url('https://www.transparenttextures.com/patterns/lined-paper.png'); background-color: #fefce8; }
+.nota-template-9 .items-table thead { background: #fecaca; color: #991b1b; }
+.nota-template-10 { text-align: center; }
+.nota-template-10 .nota-header, .nota-template-10 .customer-info-section, .nota-template-10 .totals-section, .nota-template-10 .nota-footer { justify-content: center; text-align: center; }
+
+
+/* --- RENTAL RECEIPT (1/3 A4 PORTRAIT) STYLES --- */
+
+/* On-screen preview container with portrait aspect ratio */
+#rental-preview-container {
+    width: 100%;
+    max-width: 330px; /* ~99mm for a better on-screen view */
+    aspect-ratio: 99 / 210;
+    margin: 0 auto;
+    padding: 1rem;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: white;
 }
 
-.kwitansi-classic-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border: 1px dashed #4fc3f7;
-}
-
-.kwitansi-stub {
-    flex: 0 0 5cm;
-    padding: 0.5cm;
-    border-right: 2px dashed #4fc3f7;
-    position: relative;
-}
-
-.kwitansi-stub-content {
+/* The printable area fills its container */
+#rental-printable-area {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 9pt;
+    color: #000;
+    width: 100%;
     height: 100%;
-    border: 2px solid #4fc3f7;
-    border-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%234FC3F7FF' stroke-width='4' stroke-dasharray='2,4' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e") 2;
-    padding: 0.5cm;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    text-align: center;
 }
 
-.stub-logo {
-    flex-grow: 1;
-    background-image: radial-gradient(circle, #b3e5fc 20%, transparent 20%);
-    background-size: 30px 30px;
-    opacity: 0.5;
-    margin: 1cm 0;
-}
-
-.stub-total-label {
-    font-size: 14px;
-    font-weight: bold;
-}
-.stub-total-amount {
-    font-size: 16px;
-    font-weight: bold;
-    border-top: 1px solid #4fc3f7;
-    padding-top: 4px;
-}
-
-.kwitansi-main {
-    flex-grow: 1;
-    padding: 0.5cm 1cm;
-    position: relative;
-}
-
-.kwitansi-main::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    height: 80%;
-    background-image: radial-gradient(circle, #b3e5fc 30%, transparent 30%);
-    background-size: 80px 80px;
-    opacity: 0.3;
-    z-index: 0;
-}
-
-.kwitansi-main-content {
-    position: relative;
-    z-index: 1;
-    height: 100%;
+/* Main container for vertical stacking */
+.receipt-main-flex-container {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
-.field-row {
-    display: flex;
-    align-items: baseline;
-    margin-bottom: 1.2rem;
-    font-size: 14px;
+/* Top section for the car image */
+.receipt-image-column {
+    flex-shrink: 0;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed #000;
 }
-
-.kwitansi-label {
-    flex: 0 0 120px;
-    color: #01579b;
-}
-
-.input-line {
-    flex-grow: 1;
-    border-bottom: 1.5px dotted #333;
-    padding: 0 4px;
-    min-height: 24px;
-    font-style: italic;
-    color: #374151;
-}
-
-.shaded-bg {
-    background: repeating-linear-gradient(
-        45deg,
-        #d1e6f0,
-        #d1e6f0 2px,
-        transparent 2px,
-        transparent 4px
-    );
-    border-radius: 2px;
-}
-
-.kwitansi-footer {
-    margin-top: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-
-.total-box {
-    border: 2px solid #01579b;
-    padding: 4px 8px;
-    display: flex;
-    align-items: center;
+.receipt-image-column img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: cover;
     border-radius: 4px;
 }
 
-.rp-label {
-    font-weight: bold;
-    color: #01579b;
-    margin-right: 8px;
-    font-size: 16px;
+/* Bottom section for all text details */
+.receipt-details-column {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-.total-amount {
-    font-size: 20px;
-    font-weight: bold;
-    color: #01579b;
-}
-
-.signature-area {
+/* Header within the details column */
+.receipt-header {
     text-align: center;
-    font-size: 12px;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #000;
+}
+.receipt-header h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-size: 14pt;
+}
+.receipt-header h2 {
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-size: 11pt;
+}
+.receipt-header p {
+    font-size: 8pt;
+    margin: 0;
 }
 
-/* --- UNIFIED PRINT STYLES (REFACTORED) --- */
+/* Body (main content) of the receipt */
+.receipt-body {
+    padding-top: 0.5rem;
+}
+.receipt-field {
+    margin-bottom: 0.3rem;
+    display: flex;
+}
+.receipt-label {
+    font-weight: bold;
+    flex: 0 0 120px; /* Fixed width for labels */
+}
+.receipt-value {
+    flex: 1;
+}
+
+/* Footer pushed to the bottom */
+.receipt-footer {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #000;
+    text-align: right;
+}
+
+
+/* --- UNIFIED PRINT STYLES --- */
 @media print {
-  body * {
-    visibility: hidden;
-  }
+    /* This is the generic rule for A4 documents like Nota and Kwitansi */
+    @page {
+        size: A4;
+        margin: 0;
+    }
 
-  .printable, .printable * {
-    visibility: visible;
-  }
+    /* Hide everything by default when printing */
+    body * {
+        visibility: hidden;
+    }
+    
+    /* Show only the designated printable area and its children */
+    .printable, .printable * {
+        visibility: visible;
+    }
+    
+    /* Position the printable area to fill the page */
+    .printable {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        background: white;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
 
-  .printable {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: auto;
-    margin: 0;
-    padding: 0;
-    background: white;
-    font-size: 12pt;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+    /* Hide elements marked as no-print */
+    .no-print {
+        display: none !important;
+    }
 
-  .no-print {
-    display: none !important;
-  }
+    /* Remove screen-only styling from templates */
+    [class*="kwitansi-template-"], [class*="nota-template-"] {
+        border: none !important;
+        box-shadow: none !important;
+    }
 
-  .printable-container {
-    padding: 0;
-    margin: 0;
-  }
-
-  .document-wrapper {
-    border: none !important;
-    box-shadow: none !important;
-  }
-  
-  .receipt-content {
-    max-width: 320px; /* Optimal width for thermal-style receipts */
-    padding: 1cm;
-  }
-
-  .printable tbody tr:nth-child(even) {
-    background-color: #f9fafb !important; /* gray-50 */
-  }
-  
-  .printable tbody tr {
-      border-bottom-width: 1px;
-      border-color: #e5e7eb !important; /* gray-200 */
-  }
-
-  @page {
-    size: A4 landscape;
-    margin: 1cm;
-  }
+    /* --- Specific styles for the POS receipt --- */
+    #receipt-content {
+        max-width: 320px;
+    }
 }
+
 
 /* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }

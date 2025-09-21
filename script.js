@@ -129,16 +129,10 @@ const stockFilter = document.getElementById('stockFilter');
 const allModals = document.querySelectorAll('.modal');
 const toolsBtn = document.getElementById('toolsBtn');
 const toolsDropdown = document.getElementById('toolsDropdown');
+const invoiceBtn = document.getElementById('invoiceBtn');
+const invoiceDropdown = document.getElementById('invoiceDropdown');
 
 // Utility functions
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0
-    }).format(amount);
-}
-
 function getCurrentTime() {
     return new Date().toLocaleString('id-ID', {
         year: 'numeric',
@@ -160,10 +154,10 @@ function updateTime() {
 
 function updateStats() {
     document.getElementById('totalProducts').textContent = products.length;
-    document.getElementById('todaySales').textContent = formatCurrency(currentDailyStats.totalSales);
+    document.getElementById('todaySales').textContent = formatCurrency(currentDailyStats.totalSales, true);
     document.getElementById('totalTransactions').textContent = currentDailyStats.totalTransactions;
     document.getElementById('avgTransaction').textContent = formatCurrency(
-        currentDailyStats.totalTransactions > 0 ? currentDailyStats.totalSales / currentDailyStats.totalTransactions : 0
+        currentDailyStats.totalTransactions > 0 ? currentDailyStats.totalSales / currentDailyStats.totalTransactions : 0, true
     );
 }
 
@@ -222,7 +216,7 @@ function renderProducts(productList = products) {
                 </div>
                 
                 <div class="mt-auto">
-                    <div class="text-lg font-bold text-primary-600 mb-3">${formatCurrency(product.harga)}</div>
+                    <div class="text-lg font-bold text-primary-600 mb-3">${formatCurrency(product.harga, true)}</div>
                     <button 
                         onclick="addToCart('${product.kode}')" 
                         class="w-full btn-primary text-sm ${stockStatus === 'out' ? 'opacity-50 cursor-not-allowed' : ''}"
@@ -335,8 +329,8 @@ function renderCart() {
                 </div>
                 
                 <div class="text-right">
-                    <div class="text-xs text-gray-500">${formatCurrency(item.harga)} each</div>
-                    <div class="font-semibold text-sm text-primary-600">${formatCurrency(item.total)}</div>
+                    <div class="text-xs text-gray-500">${formatCurrency(item.harga, true)} each</div>
+                    <div class="font-semibold text-sm text-primary-600">${formatCurrency(item.total, true)}</div>
                 </div>
             </div>
         `;
@@ -351,9 +345,9 @@ function updateCartTotals() {
     const total = subtotal;
     
     document.getElementById('itemCount').textContent = itemCount;
-    document.getElementById('subtotal').textContent = formatCurrency(subtotal);
-    document.getElementById('tax').textContent = formatCurrency(0);
-    document.getElementById('total').textContent = formatCurrency(total);
+    document.getElementById('subtotal').textContent = formatCurrency(subtotal, true);
+    document.getElementById('tax').textContent = formatCurrency(0, true);
+    document.getElementById('total').textContent = formatCurrency(total, true);
     
     document.getElementById('checkoutBtn').disabled = cart.length === 0;
 }
@@ -402,7 +396,7 @@ function openCheckoutModal() {
     if (cart.length === 0) return;
     
     const total = cart.reduce((sum, item) => sum + item.total, 0);
-    document.getElementById('checkoutTotal').textContent = formatCurrency(total);
+    document.getElementById('checkoutTotal').textContent = formatCurrency(total, true);
     document.getElementById('cashAmount').value = '';
     document.getElementById('changeAmount').textContent = '';
     document.getElementById('customerName').value = '';
@@ -410,7 +404,7 @@ function openCheckoutModal() {
     document.getElementById('checkoutItems').innerHTML = cart.map(item => `
         <div class="flex justify-between text-sm">
             <span>${item.nama} x${item.quantity}</span>
-            <span>${formatCurrency(item.total)}</span>
+            <span>${formatCurrency(item.total, true)}</span>
         </div>
     `).join('');
     
@@ -425,10 +419,10 @@ function calculateChange() {
     const changeEl = document.getElementById('changeAmount');
     if (cashAmount > 0) {
         if (change >= 0) {
-            changeEl.textContent = `💰 Change: ${formatCurrency(change)}`;
+            changeEl.textContent = `💰 Change: ${formatCurrency(change, true)}`;
             changeEl.className = 'text-sm text-green-600 mt-2 font-medium';
         } else {
-            changeEl.textContent = `❌ Insufficient: ${formatCurrency(Math.abs(change))} more needed`;
+            changeEl.textContent = `❌ Insufficient: ${formatCurrency(Math.abs(change), true)} more needed`;
             changeEl.className = 'text-sm text-red-600 mt-2 font-medium';
         }
     } else {
@@ -503,17 +497,12 @@ function handlePrint(elementId) {
         return;
     }
     
-    // Add the 'printable' class to the target element
     printSection.classList.add('printable');
-    
-    // Trigger the browser's print dialog
     window.print();
-    
-    // Clean up by removing the class after printing
     printSection.classList.remove('printable');
 }
 
-// Receipt, Kwitansi, Nota functions
+// Receipt functions
 function generateReceipt(transaction) {
     document.getElementById('receipt-content').innerHTML = `
         <div class="text-center border-b-2 border-dashed border-gray-400 pb-4 mb-4">
@@ -529,91 +518,15 @@ function generateReceipt(transaction) {
         </div>
         <table class="w-full text-xs">
             <thead><tr class="border-b border-gray-300"><th class="text-left py-2">Item</th><th class="text-center py-2">Qty</th><th class="text-right py-2">Total</th></tr></thead>
-            <tbody>${transaction.items.map(item => `<tr><td class="py-1">${item.nama}</td><td class="text-center font-mono">${item.quantity}</td><td class="text-right font-mono">${formatCurrency(item.total)}</td></tr>`).join('')}</tbody>
+            <tbody>${transaction.items.map(item => `<tr><td class="py-1">${item.nama}</td><td class="text-center font-mono">${item.quantity}</td><td class="text-right font-mono">${formatCurrency(item.total, true)}</td></tr>`).join('')}</tbody>
         </table>
         <div class="border-t-2 border-dashed border-gray-400 pt-4 mt-4 space-y-2 text-sm">
-            <div class="flex justify-between font-bold text-lg"><span>TOTAL:</span><span class="font-mono">${formatCurrency(transaction.total)}</span></div>
-            ${transaction.paymentMethod === 'cash' ? `<div class="flex justify-between"><span>Cash:</span><span class="font-mono">${formatCurrency(transaction.cashAmount)}</span></div><div class="flex justify-between"><span>Change:</span><span class="font-mono">${formatCurrency(transaction.change)}</span></div>` : ''}
+            <div class="flex justify-between font-bold text-lg"><span>TOTAL:</span><span class="font-mono">${formatCurrency(transaction.total, true)}</span></div>
+            ${transaction.paymentMethod === 'cash' ? `<div class="flex justify-between"><span>Cash:</span><span class="font-mono">${formatCurrency(transaction.cashAmount, true)}</span></div><div class="flex justify-between"><span>Change:</span><span class="font-mono">${formatCurrency(transaction.change, true)}</span></div>` : ''}
         </div>
         <div class="text-center mt-6 pt-4 border-t-2 border-dashed border-gray-400"><p class="text-sm font-bold">🙏 Thank you!</p></div>
     `;
     openModal('receiptModal');
-}
-
-function terbilang(n) {
-    if (n === null || n === undefined) return "";
-    n = Math.abs(Math.floor(n));
-    const bilangan = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
-    let temp = "";
-    if (n < 12) {
-        temp = " " + bilangan[n];
-    } else if (n < 20) {
-        temp = terbilang(n - 10) + " belas";
-    } else if (n < 100) {
-        temp = terbilang(Math.floor(n / 10)) + " puluh" + terbilang(n % 10);
-    } else if (n < 200) {
-        temp = " seratus" + terbilang(n - 100);
-    } else if (n < 1000) {
-        temp = terbilang(Math.floor(n / 100)) + " ratus" + terbilang(n % 100);
-    } else if (n < 2000) {
-        temp = " seribu" + terbilang(n - 1000);
-    } else if (n < 1000000) {
-        temp = terbilang(Math.floor(n / 1000)) + " ribu" + terbilang(n % 1000);
-    } else if (n < 1000000000) {
-        temp = terbilang(Math.floor(n / 1000000)) + " juta" + terbilang(n % 1000000);
-    }
-    return temp;
-}
-
-function toWords(num) {
-    if (num === 0) return "Nol";
-    const result = terbilang(num).trim().replace(/\s\s+/g, ' ');
-    return (result.charAt(0).toUpperCase() + result.slice(1)) + " rupiah";
-}
-
-async function generateKwitansi(transactionId) {
-    const transaction = await db.getTransaction(transactionId);
-    if (!transaction) return;
-
-    const businessName = await db.getSetting('businessName', 'Alata Craft');
-    const businessAddress = await db.getSetting('businessAddress', 'Jl. Kerajinan No. 123, Indonesia');
-
-    document.getElementById('kwitansiBusinessName').textContent = businessName;
-    document.getElementById('kwitansiBusinessAddress').textContent = businessAddress;
-    document.getElementById('kwitansiNo').textContent = `KW/${new Date(transaction.date).getFullYear()}/${transaction.receiptNo}`;
-    document.getElementById('kwitansiCustomer').textContent = transaction.customer;
-    document.getElementById('kwitansiTerbilang').textContent = toWords(transaction.total);
-    document.getElementById('kwitansiDesc').textContent = `Pembelian ${transaction.items.length} jenis barang.`;
-    document.getElementById('kwitansiTotal').textContent = formatCurrency(transaction.total);
-    document.getElementById('kwitansiDate').textContent = new Date(transaction.date).toLocaleString('id-ID');
-    document.getElementById('kwitansiReceiver').textContent = businessName;
-
-    openModal('kwitansiModal');
-}
-
-async function generateNota(transactionId) {
-    const transaction = await db.getTransaction(transactionId);
-    if (!transaction) return;
-
-    document.getElementById('notaNo').textContent = `NT/${new Date(transaction.date).getFullYear()}/${transaction.receiptNo}`;
-    document.getElementById('notaDate').textContent = new Date(transaction.date).toLocaleString('id-ID');
-    document.getElementById('notaCustomer').textContent = transaction.customer;
-
-    const itemsTbody = document.getElementById('notaItemsTable');
-    itemsTbody.innerHTML = transaction.items.map(item => `
-        <tr class="border-b border-dashed">
-            <td class="py-1 align-top">
-                ${item.nama}
-                <div class="pl-2">${item.quantity} x ${formatCurrency(item.harga)}</div>
-            </td>
-            <td class="py-1 text-right align-top">${formatCurrency(item.total)}</td>
-        </tr>
-    `).join('');
-
-    document.getElementById('notaSubtotal').textContent = formatCurrency(transaction.total);
-    document.getElementById('notaTotal').textContent = formatCurrency(transaction.total);
-
-    openModal('notaModal');
 }
 
 // Transaction History
@@ -647,17 +560,13 @@ async function renderTransactionHistory() {
                         <p class="text-sm text-gray-600">Customer: ${transaction.customer}</p>
                     </div>
                     <div class="text-left md:text-right mt-2 md:mt-0">
-                        <div class="text-xl font-bold text-primary-600">${formatCurrency(transaction.total)}</div>
+                        <div class="text-xl font-bold text-primary-600">${formatCurrency(transaction.total, true)}</div>
                         <div class="text-sm text-gray-600 capitalize">${transaction.paymentMethod === 'cash' ? '💵 Cash' : '🏦 Transfer'}</div>
                     </div>
                 </div>
                 <div class="border-t pt-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm mb-3">
-                        ${transaction.items.map(item => `<div class="flex justify-between"><span>${item.nama} x${item.quantity}</span><span>${formatCurrency(item.total)}</span></div>`).join('')}
-                    </div>
-                    <div class="flex justify-end space-x-2 mt-4">
-                        <button onclick="generateKwitansi('${transaction.id}')" class="btn-secondary text-xs">📄 Kwitansi</button>
-                        <button onclick="generateNota('${transaction.id}')" class="btn-secondary text-xs">🧾 Nota</button>
+                        ${transaction.items.map(item => `<div class="flex justify-between"><span>${item.nama} x${item.quantity}</span><span>${formatCurrency(item.total, true)}</span></div>`).join('')}
                     </div>
                 </div>
             </div>
@@ -717,17 +626,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     });
 
-    if (toolsBtn) {
-        toolsBtn.addEventListener('click', (e) => {
+    function setupDropdown(btn, dropdown) {
+        if (!btn) return;
+        btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            toolsDropdown.classList.toggle('hidden');
+            dropdown.classList.toggle('hidden');
         });
     }
 
+    setupDropdown(toolsBtn, toolsDropdown);
+    setupDropdown(invoiceBtn, invoiceDropdown);
+
     document.addEventListener('click', (e) => {
-        const container = document.getElementById('tools-menu-container');
-        if (container && !container.contains(e.target)) {
+        if (toolsDropdown && !toolsBtn.parentElement.contains(e.target)) {
             toolsDropdown.classList.add('hidden');
+        }
+        if (invoiceDropdown && !invoiceBtn.parentElement.contains(e.target)) {
+            invoiceDropdown.classList.add('hidden');
         }
     });
 
@@ -735,6 +650,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (e.key === 'Escape') {
             allModals.forEach(m => m.classList.add('hidden'));
             if (toolsDropdown) toolsDropdown.classList.add('hidden');
+            if (invoiceDropdown) invoiceDropdown.classList.add('hidden');
         }
         if (e.ctrlKey || e.metaKey) {
             if (e.key === 'f') { e.preventDefault(); searchInput.focus(); }

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generator Rental Receipt - Alata Craft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* This rule applies ONLY when printing from this page */
+        @media print {
+            @page {
+                size: 99mm 210mm; /* 1/3 A4 Portrait */
+                margin: 5mm;
+            }
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body class="bg-cream-100">
+
+    <div class="container mx-auto p-4 lg:p-8 flex flex-col lg:flex-row gap-8">
+        <!-- Form Section -->
+        <div id="rental-form" class="w-full lg:max-w-md bg-white p-8 rounded-lg shadow-2xl self-start no-print">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-bold text-primary-800">Rental Receipt Generator</h1>
+                <a href="index.html" class="text-primary-600 hover:underline text-sm">Back to POS</a>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="form-rental-no" class="block text-sm font-medium text-gray-700 mb-1">No.</label>
+                        <input type="text" id="form-rental-no" class="input-field">
+                    </div>
+                     <div>
+                        <label for="form-rental-date" class="block text-sm font-medium text-gray-700 mb-1">Hari, Tanggal</label>
+                        <input type="text" id="form-rental-date" class="input-field" placeholder="e.g., Senin, 1 Januari 2025">
+                    </div>
+                </div>
+                <div>
+                    <label for="form-rental-customer" class="block text-sm font-medium text-gray-700 mb-1">Sudah terima dari</label>
+                    <input type="text" id="form-rental-customer" class="input-field" placeholder="Nama pelanggan">
+                </div>
+                <div>
+                    <label for="form-rental-amount" class="block text-sm font-medium text-gray-700 mb-1">Sebesar (Jumlah Uang Rp)</label>
+                    <input type="number" id="form-rental-amount" class="input-field" placeholder="e.g., 500000">
+                </div>
+                 <div>
+                    <label for="form-rental-for" class="block text-sm font-medium text-gray-700 mb-1">Untuk</label>
+                    <input type="text" id="form-rental-for" class="input-field" value="Sewa mobil selama 1 hari">
+                </div>
+                <div>
+                    <label for="form-rental-plate" class="block text-sm font-medium text-gray-700 mb-1">No. Polisi</label>
+                    <input type="text" id="form-rental-plate" class="input-field" placeholder="e.g., DB 1234 AB">
+                </div>
+                <div>
+                    <label for="form-rental-image" class="block text-sm font-medium text-gray-700 mb-1">Upload Car Image (Optional)</label>
+                    <input type="file" id="form-rental-image" class="input-field" accept="image/*">
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-6">
+                <button id="printReceiptBtn" class="btn-primary w-full py-3 text-lg">
+                    🖨️ Generate & Print Receipt
+                </button>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="w-full flex-1">
+             <h2 class="text-xl font-bold text-gray-700 mb-4 no-print text-center">Receipt Preview</h2>
+            <!-- This container provides the on-screen frame (border, shadow, aspect ratio) -->
+            <div id="rental-preview-container">
+                <!-- This is the element that will be printed -->
+                <div id="rental-printable-area">
+                    <div class="receipt-main-flex-container">
+                        <!-- Top Section: Image -->
+                        <div class="receipt-image-column">
+                            <img id="print-rental-car-image" src="https://img.freepik.com/free-photo/blue-sport-sedan-parked-yard_114579-5078.jpg?w=996" alt="Car">
+                        </div>
+                        <!-- Bottom Section: Details -->
+                        <div class="receipt-details-column">
+                            <header class="receipt-header">
+                                <div class="flex items-center justify-center gap-3 mb-2">
+                                    <img src="https://img.freepik.com/free-vector/car-logo-with-circle-design_1043-88.jpg?w=740" alt="Oto Tansan Logo" class="h-10">
+                                    <div class="text-left">
+                                        <h1 class="font-bold text-xl">OTO TANSAN</h1>
+                                        <h2 class="font-bold">RENTAL MOBIL</h2>
+                                    </div>
+                                </div>
+                                <p>Jl. Kancil No 85, Tenilo Gorontalo</p>
+                                <p>Telp. 085340111991</p>
+                            </header>
+                            <main class="receipt-body">
+                                <div class="receipt-field">
+                                    <span class="receipt-label">No.</span>
+                                    <span class="receipt-value" id="print-rental-no"></span>
+                                </div>
+                                <div class="receipt-field">
+                                    <span class="receipt-label">Sudah terima dari</span>
+                                    <span class="receipt-value" id="print-rental-customer"></span>
+                                </div>
+                                <div class="receipt-field">
+                                    <span class="receipt-label">Sebesar</span>
+                                    <span class="receipt-value" id="print-rental-amount"></span>
+                                </div>
+                                <div class="receipt-field">
+                                    <span class="receipt-label">Untuk</span>
+                                    <span class="receipt-value" id="print-rental-for"></span>
+                                </div>
+                                <div class="receipt-field">
+                                    <span class="receipt-label">Hari, Tanggal</span>
+                                    <span class="receipt-value" id="print-rental-date"></span>
+                                </div>
+                                <div class="receipt-field">
+                                    <span class="receipt-label">No. Polisi</span>
+                                    <span class="receipt-value" id="print-rental-plate"></span>
+                                </div>
+                            </main>
+                            <footer class="receipt-footer">
+                                <div class="text-center">Ttd.</div>
+                            </footer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="rental.js"></script>
+</body>
+</html>

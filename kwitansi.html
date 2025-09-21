@@ -3,58 +3,127 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Generator Kwitansi (Simple) - Alata Craft</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>Generator Kwitansi - Alata Craft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Times+New+Roman&family=Playfair+Display:wght@700&family=Roboto+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+        }
+    </style>
 </head>
-<body class="bg-cream-100">
+<body class="bg-cream-100 flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div class="container mx-auto p-4 sm:p-8">
-        <!-- Form Section (Visible on Screen) -->
-        <div id="kwitansi-form" class="no-print max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-lg">
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-primary-800">Generator Kwitansi (Simple)</h1>
-                <a href="index.html" class="text-primary-600 hover:underline text-sm">Kembali ke POS</a>
+    <!-- Form Section (Visible on Screen) -->
+    <div id="kwitansi-form" class="no-print max-w-2xl w-full bg-white p-8 rounded-lg shadow-2xl mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold text-primary-800">Generator Kwitansi</h1>
+            <a href="index.html" class="text-primary-600 hover:underline text-sm">Kembali ke POS</a>
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <label for="kwitansi-template-selector" class="block text-sm font-medium text-gray-700 mb-1">Pilih Template</label>
+                <select id="kwitansi-template-selector" class="input-field">
+                    <option value="template-1">Classic Blue</option>
+                    <option value="template-2">Modern Minimalist</option>
+                    <option value="template-3">Corporate Green</option>
+                    <option value="template-4">Elegant Serif</option>
+                    <option value="template-5">Bold & Simple</option>
+                    <option value="template-6">Eco Craft</option>
+                    <option value="template-7">Techy Dark</option>
+                    <option value="template-8">Formal Red</option>
+                    <option value="template-9">Friendly Rounded</option>
+                    <option value="template-10">Vintage Paper</option>
+                </select>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label for="form-kwitansi-no" class="block text-sm font-medium text-gray-700 mb-1">No. Kwitansi</label>
                     <input type="text" id="form-kwitansi-no" class="input-field">
                 </div>
                 <div>
+                    <label for="form-kwitansi-location" class="block text-sm font-medium text-gray-700 mb-1">Tempat</label>
+                    <input type="text" id="form-kwitansi-location" class="input-field" value="Jakarta">
+                </div>
+                <div>
                     <label for="form-kwitansi-date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
                     <input type="date" id="form-kwitansi-date" class="input-field">
                 </div>
-                <div class="md:col-span-2">
-                    <label for="form-kwitansi-customer" class="block text-sm font-medium text-gray-700 mb-1">Telah Terima Dari</label>
-                    <input type="text" id="form-kwitansi-customer" class="input-field" placeholder="Nama pelanggan">
-                </div>
-                <div class="md:col-span-2">
-                    <label for="form-kwitansi-amount" class="block text-sm font-medium text-gray-700 mb-1">Jumlah Uang (Rp)</label>
-                    <input type="number" id="form-kwitansi-amount" class="input-field" placeholder="e.g., 150000">
-                </div>
-                <div class="md:col-span-2">
-                    <label for="form-kwitansi-desc" class="block text-sm font-medium text-gray-700 mb-1">Untuk Pembayaran</label>
-                    <textarea id="form-kwitansi-desc" rows="2" class="input-field" placeholder="Contoh: Pembelian 2 buah tas anyaman"></textarea>
-                </div>
-                <div class="md:col-span-2">
-                    <p class="text-sm font-medium text-gray-700 mb-1">Uang Sejumlah (Terbilang)</p>
-                    <p id="form-kwitansi-terbilang" class="input-field bg-gray-100 min-h-[42px] flex items-center"></p>
-                </div>
             </div>
-
-            <button id="generateKwitansiBtn" class="btn-primary w-full py-3 text-lg mt-8">
-                🖨️ Generate & Print Kwitansi
-            </button>
+            <div>
+                <label for="form-kwitansi-customer" class="block text-sm font-medium text-gray-700 mb-1">Telah Terima Dari</label>
+                <input type="text" id="form-kwitansi-customer" class="input-field" placeholder="Nama pelanggan">
+            </div>
+            <div>
+                <label for="form-kwitansi-amount" class="block text-sm font-medium text-gray-700 mb-1">Jumlah Uang (Rp)</label>
+                <input type="number" id="form-kwitansi-amount" class="input-field" placeholder="e.g., 150000">
+            </div>
+            <div>
+                <label for="form-kwitansi-desc" class="block text-sm font-medium text-gray-700 mb-1">Untuk Pembayaran</label>
+                <textarea id="form-kwitansi-desc" rows="2" class="input-field" placeholder="Contoh: Pembelian 2 buah tas anyaman"></textarea>
+            </div>
         </div>
+
+        <button id="generateKwitansiBtn" class="btn-primary w-full py-3 text-lg mt-6">
+            🖨️ Generate & Print Kwitansi
+        </button>
     </div>
 
     <!-- Printable Section (Hidden by default, made visible for printing) -->
-    <div id="kwitansi-printable-area" class="printable-container">
-        <!-- This version uses the classic style, so this simple printable area is not used by the new kwitansi-classic.html -->
+    <div id="kwitansi-printable-area" class="printable-container scale-[0.3] sm:scale-50 md:scale-75 origin-top">
+        <div id="kwitansi-wrapper" class="kwitansi-template-1">
+            <!-- Left Stub -->
+            <div class="kwitansi-stub">
+                <div class="kwitansi-stub-content">
+                    <p class="stub-label">No. <span id="print-kwitansi-no-stub" class="font-mono"></span></p>
+                    <div class="stub-logo">AC</div>
+                    <p class="stub-total-label">Rp</p>
+                    <p id="print-kwitansi-total-stub" class="stub-total-amount"></p>
+                </div>
+            </div>
+            <!-- Main Content Area -->
+            <div class="kwitansi-main">
+                <div class="kwitansi-main-content">
+                    <div class="kwitansi-header">
+                        <h2 class="kwitansi-title">KWITANSI</h2>
+                    </div>
+                    <div class="field-row">
+                        <label class="kwitansi-label">No.</label>
+                        <span id="print-kwitansi-no-main" class="input-line"></span>
+                    </div>
+                    <div class="field-row">
+                        <label class="kwitansi-label">Telah terima dari</label>
+                        <span id="print-kwitansi-customer" class="input-line"></span>
+                    </div>
+                    <div class="field-row">
+                        <label class="kwitansi-label">Uang sejumlah</label>
+                        <span id="print-kwitansi-terbilang" class="input-line shaded-bg"></span>
+                    </div>
+                    <div class="field-row">
+                        <label class="kwitansi-label">Untuk pembayaran</label>
+                        <span id="print-kwitansi-desc" class="input-line"></span>
+                    </div>
+                    <div class="kwitansi-footer">
+                        <div class="total-box">
+                            <span class="rp-label">Rp.</span>
+                            <span id="print-kwitansi-total" class="total-amount"></span>
+                        </div>
+                        <div class="signature-area">
+                            <p><span id="print-kwitansi-location"></span>, <span id="print-kwitansi-date"></span></p>
+                            <div class="signature-space"></div>
+                            <p class="signature-name">( Tanda Tangan & Nama Jelas )</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="generator.js"></script>
+    <script src="utils.js"></script>
+    <script src="kwitansi.js"></script>
 </body>
 </html>
