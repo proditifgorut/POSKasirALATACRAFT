@@ -88,8 +88,11 @@
     </header>
 
     <!-- Database Status Indicator -->
-    <div id="dbStatus" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-2 text-sm text-center no-print">
+    <div id="dbStatus" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-2 text-sm text-center no-print flex items-center justify-center gap-4">
         <span id="dbStatusText">🔄 Initializing database...</span>
+        <button id="dbErrorHelpBtn" class="hidden bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-xs font-bold hover:bg-yellow-300 transition-colors">
+            Troubleshoot
+        </button>
     </div>
 
     <div class="container mx-auto px-4 py-6">
@@ -307,6 +310,39 @@
             </div>
         </div>
 
+        <!-- Database Error Modal -->
+        <div id="dbErrorModal" class="fixed inset-0 bg-black bg-opacity-50 modal hidden z-50 no-print">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg max-w-lg w-full p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mr-4">
+                            <span class="text-2xl">⚠️</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-red-700">Database Connection Error</h3>
+                    </div>
+                    
+                    <div class="text-gray-700 space-y-3 mb-6">
+                        <p>The application could not connect to the advanced local database (IndexedDB). This might happen if you are using a private/incognito browser window or if your browser's storage is disabled.</p>
+                        <p><strong>You can still use the app in a limited "Fallback Mode"</strong>, but data will be less reliable and some advanced features might be unavailable.</p>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">How to fix this:</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li>Use a standard (non-private) browser window.</li>
+                            <li>Ensure your browser settings allow websites to save data.</li>
+                            <li>Try clearing your browser's cache and site data for this page and then reload.</li>
+                        </ul>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button id="continueFallbackBtn" class="btn-secondary">Continue in Fallback Mode</button>
+                        <button onclick="location.reload()" class="btn-primary">Reload Page</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="utils.js"></script>
@@ -318,13 +354,20 @@
         function updateDatabaseStatus(status, message) {
             const statusEl = document.getElementById('dbStatus');
             const statusTextEl = document.getElementById('dbStatusText');
+            const helpBtn = document.getElementById('dbErrorHelpBtn');
             
-            statusEl.className = `border-l-4 p-2 text-sm text-center no-print ${
+            statusEl.className = `border-l-4 p-2 text-sm text-center no-print flex items-center justify-center gap-4 ${
                 status === 'success' ? 'bg-green-100 border-green-500 text-green-700' :
                 status === 'error' ? 'bg-red-100 border-red-500 text-red-700' :
                 'bg-yellow-100 border-yellow-500 text-yellow-700'
             }`;
             statusTextEl.textContent = message;
+
+            if (status === 'error') {
+                helpBtn.classList.remove('hidden');
+            } else {
+                helpBtn.classList.add('hidden');
+            }
         }
 
         function showDatabaseInfo() {
@@ -349,9 +392,32 @@ Console Commands:
                 if (window.alataCraftDB && window.alataCraftDB.db) {
                     updateDatabaseStatus('success', '✅ Advanced Local Database Connected - Full POS Features Available');
                 } else {
-                    updateDatabaseStatus('error', '⚠️ Database Error - Running in Fallback Mode');
+                    updateDatabaseStatus('error', '⚠️ Database Error - Running in Fallback Mode. Some features may be limited.');
                 }
             }, 2000);
+
+            // DB Error Modal Logic
+            const dbErrorHelpBtn = document.getElementById('dbErrorHelpBtn');
+            const dbErrorModal = document.getElementById('dbErrorModal');
+            const continueFallbackBtn = document.getElementById('continueFallbackBtn');
+
+            if (dbErrorHelpBtn) {
+                dbErrorHelpBtn.addEventListener('click', () => {
+                    dbErrorModal.classList.remove('hidden');
+                });
+            }
+            if (continueFallbackBtn) {
+                continueFallbackBtn.addEventListener('click', () => {
+                    dbErrorModal.classList.add('hidden');
+                });
+            }
+            if (dbErrorModal) {
+                dbErrorModal.addEventListener('click', (e) => {
+                    if (e.target === dbErrorModal) {
+                        dbErrorModal.classList.add('hidden');
+                    }
+                });
+            }
         });
     </script>
 </body>
