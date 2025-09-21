@@ -243,8 +243,8 @@
 
 /* The printable area fills its container */
 #rental-printable-area {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 9pt;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 10pt;
     color: #000;
     width: 100%;
     height: 100%;

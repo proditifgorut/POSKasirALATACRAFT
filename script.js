@@ -75,7 +75,7 @@ async function initializeDatabase() {
             
             await db.setSetting('transactionCounter', 1);
             await db.setSetting('businessName', 'Alata Craft');
-            await db.setSetting('businessAddress', 'Jl. Kerajinan No. 123, Indonesia');
+            await db.setSetting('businessAddress', 'JL.Kota Tengah No. 33 Gorontalo');
             await db.setSetting('businessPhone', '(021) 123-4567');
             
             console.log('✅ Initial data setup completed');
@@ -415,7 +415,11 @@ function openCheckoutModal() {
     document.getElementById('cashAmount').value = '';
     document.getElementById('changeAmount').textContent = '';
     document.getElementById('customerName').value = '';
+    document.getElementById('customerAddress').value = '';
     
+    document.getElementById('shopName').value = 'Alata Craft';
+    document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
+
     document.getElementById('checkoutItems').innerHTML = cart.map(item => `
         <div class="flex justify-between text-sm">
             <span>${item.nama} x${item.quantity}</span>
@@ -449,6 +453,10 @@ async function processCheckout() {
     const paymentMethod = document.querySelector('.payment-method-btn.active').dataset.method;
     const total = cart.reduce((sum, item) => sum + item.total, 0);
     const customerName = document.getElementById('customerName').value.trim() || 'Customer';
+    const customerAddress = document.getElementById('customerAddress').value.trim();
+    const shopName = document.getElementById('shopName').value.trim() || 'Alata Craft';
+    const transactionDateValue = document.getElementById('transactionDate').value;
+    const transactionDate = new Date(transactionDateValue).toISOString();
     
     if (paymentMethod === 'cash') {
         const cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
@@ -462,8 +470,10 @@ async function processCheckout() {
         const transaction = {
             id: `TRX-${Date.now()}`,
             receiptNo: transactionCounter.toString().padStart(3, '0'),
-            date: new Date().toISOString(),
+            date: transactionDate,
             customer: customerName,
+            customerAddress: customerAddress,
+            shopName: shopName,
             items: [...cart],
             total: total,
             paymentMethod: paymentMethod,
@@ -486,7 +496,7 @@ async function processCheckout() {
         currentDailyStats.totalSales += total;
         currentDailyStats.totalTransactions++;
         
-        generateReceipt(transaction);
+        await generateReceipt(transaction);
         
         clearCart();
         closeModal('checkoutModal');
@@ -518,17 +528,27 @@ function handlePrint(elementId) {
 }
 
 // Receipt functions
-function generateReceipt(transaction) {
+async function generateReceipt(transaction) {
+    const addressHtml = transaction.customerAddress
+        ? `<div>🏠 Address:</div><div class="font-medium">${transaction.customerAddress.replace(/\n/g, '<br>')}</div>`
+        : '';
+    
+    let businessAddress = 'JL.Kota Tengah No. 33 Gorontalo'; // Fallback for non-db mode
+    if (db) {
+        businessAddress = await db.getSetting('businessAddress', 'JL.Kota Tengah No. 33 Gorontalo');
+    }
+
     document.getElementById('receipt-content').innerHTML = `
         <div class="text-center border-b-2 border-dashed border-gray-400 pb-4 mb-4">
-            <h2 class="text-xl font-bold text-gray-800">🌿 ALATA CRAFT</h2>
-            <p class="text-xs text-gray-500 mt-1">📍 Jl. Kerajinan No. 123, Indonesia</p>
+            <h2 class="text-xl font-bold text-gray-800">${transaction.shopName.toUpperCase()}</h2>
+            <p class="text-xs text-gray-500">📍 ${businessAddress}</p>
         </div>
         <div class="mb-4 text-xs">
             <div class="grid grid-cols-2 gap-1">
                 <div>📅 Date:</div><div class="font-mono">${new Date(transaction.date).toLocaleString('id-ID')}</div>
                 <div>🧾 Receipt #:</div><div class="font-mono">#${transaction.receiptNo}</div>
                 <div>👤 Customer:</div><div class="font-medium">${transaction.customer}</div>
+                ${addressHtml}
             </div>
         </div>
         <table class="w-full text-xs">
