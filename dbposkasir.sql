@@ -118,7 +118,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`key`, `value`) VALUES
-('businessAddress', 'Jl. Kerajinan No. 123, Indonesia'),
+('businessAddress', 'Jl. Expanjaitan No. 123, Gorontalo Indonesia'),
 ('businessName', 'Alata Craft'),
 ('businessPhone', '(021) 123-4567'),
 ('transactionCounter', '1');
